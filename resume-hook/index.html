@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="gsap.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: #0F0F0F;
+      font-family: 'Montserrat', sans-serif;
+    }
+    #root {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+    }
+    .scene {
+      position: absolute;
+      top: 0; left: 0;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: #0F0F0F;
+    }
+    #s1 { z-index: 1; }
+    #s2 { z-index: 2; opacity: 0; }
+    #s3 { z-index: 3; opacity: 0; }
+    #s4 { z-index: 4; opacity: 0; }
+    #s5 { z-index: 5; opacity: 0; }
+    #s6 { z-index: 6; opacity: 0; }
+
+    .scene-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 220px 60px 0;
+      gap: 14px;
+    }
+    .glow {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Scene 1 */
+    .s1-t1 { font-weight: 900; font-size: 108px; color: #F0F0F0; letter-spacing: -4px; line-height: 1; }
+    .s1-t2 { font-weight: 900; font-size: 128px; color: #F0F0F0; letter-spacing: -5px; line-height: 1; }
+    .s1-t3 { font-weight: 900; font-size: 74px;  color: #E63946; letter-spacing: -2px; line-height: 1; }
+    .s1-t4 { font-weight: 900; font-size: 180px; color: #E63946; letter-spacing: -8px; line-height: 0.88; }
+
+    /* Scene 2 */
+    .s2-top  { font-weight: 700; font-size: 58px; color: #F0F0F0; letter-spacing: 1px; text-align: center; }
+    .s2-in   { font-weight: 700; font-size: 38px; color: rgba(240,240,240,0.5); letter-spacing: 4px; }
+    .s2-num  { font-weight: 900; font-size: 390px; color: #FFD60A; letter-spacing: -20px; line-height: 0.82; }
+    .s2-sec  { font-weight: 700; font-size: 58px; color: #F0F0F0; letter-spacing: 1px; }
+    .s2-sub  { font-weight: 600; font-size: 36px; color: rgba(240,240,240,0.45); text-align: center; max-width: 800px; margin-top: 16px; }
+
+    /* Tip scenes shared */
+    .tip-badge    { font-weight: 900; font-size: 44px; color: #0F0F0F; background: #FFD60A; padding: 8px 26px; border-radius: 8px; letter-spacing: 3px; }
+    .tip-h1       { font-weight: 900; font-size: 86px; color: #F0F0F0; letter-spacing: -2px; line-height: 1; text-align: center; }
+    .tip-h2-red   { font-weight: 900; font-size: 86px; color: #E63946; letter-spacing: -2px; line-height: 1; text-align: center; margin-top: -10px; }
+    .tip-h2-yel   { font-weight: 900; font-size: 86px; color: #FFD60A; letter-spacing: -2px; line-height: 1; text-align: center; margin-top: -10px; }
+    .divider      { width: 180px; height: 3px; background: rgba(240,240,240,0.12); border-radius: 2px; margin: 10px 0; }
+    .ex-card      { width: 920px; padding: 22px 30px; border-radius: 14px; }
+    .ex-bad       { background: rgba(230,57,70,0.10); border: 1.5px solid rgba(230,57,70,0.28); }
+    .ex-good      { background: rgba(34,197,94,0.10); border: 1.5px solid rgba(34,197,94,0.28); }
+    .ex-tag       { font-weight: 700; font-size: 24px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    .ex-tag-bad   { color: #E63946; }
+    .ex-tag-good  { color: #22C55E; }
+    .ex-text      { font-weight: 700; font-size: 40px; color: #F0F0F0; line-height: 1.25; }
+    .ex-text-bad  { text-decoration: line-through; color: rgba(240,240,240,0.42); }
+    .stat-num     { color: #FFD60A; }
+
+    /* Scene 5 keywords */
+    .kw-row  { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; max-width: 920px; margin-top: 14px; }
+    .kw-pill { font-weight: 700; font-size: 34px; padding: 12px 28px; border-radius: 50px;
+               border: 2px solid rgba(255,214,10,0.45); color: #FFD60A; background: rgba(255,214,10,0.08); }
+
+    /* Scene 5 tip-sub */
+    .tip-sub { font-weight: 600; font-size: 38px; color: rgba(240,240,240,0.55);
+               text-align: center; max-width: 860px; line-height: 1.4; margin-top: 6px; }
+
+    /* Scene 6 CTA */
+    .cta-main { font-weight: 900; font-size: 174px; color: #FFD60A; letter-spacing: -8px; line-height: 0.84; }
+    .cta-sub  { font-weight: 900; font-size: 88px;  color: #F0F0F0; letter-spacing: -2px; }
+    .cta-bar  { width: 110px; height: 5px; background: #22C55E; border-radius: 3px; margin: 24px 0 20px; }
+    .cta-save { font-weight: 700; font-size: 54px;  color: #22C55E; letter-spacing: 1px; }
+
+    /* Captions */
+    #cap-layer {
+      position: absolute; top: 0; left: 0;
+      width: 1080px; height: 1920px;
+      z-index: 100; pointer-events: none;
+    }
+    .cg {
+      position: absolute;
+      left: 0; width: 1080px;
+      text-align: center;
+      top: 1255px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 72px;
+      line-height: 1.05;
+      color: #F0F0F0;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      text-shadow: 0 3px 20px rgba(0,0,0,0.85), 0 1px 6px rgba(0,0,0,0.95);
+      opacity: 0;
+      visibility: hidden;
+      overflow: visible;
+    }
+    .cg .cy { color: #FFD60A; }
+    .cg .cr { color: #E63946; }
+    .cg .cg2{ color: #22C55E; }
+  </style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-width="1080" data-height="1920" data-start="0" data-duration="26">
+
+  <!-- ── SCENE 1: HOOK ── -->
+  <div id="s1" class="scene">
+    <div id="s1g" class="glow" style="width:940px;height:940px;top:80px;left:70px;
+      background:radial-gradient(circle,rgba(230,57,70,0.22) 0%,rgba(230,57,70,0) 68%);"></div>
+    <div id="s1ghost" style="position:absolute;top:60px;left:0;
+      font-family:'Montserrat',sans-serif;font-weight:900;font-size:280px;
+      color:rgba(230,57,70,0.04);letter-spacing:-14px;white-space:nowrap;pointer-events:none;
+      width:1080px;text-align:center;">RESUME</div>
+    <div class="scene-inner">
+      <div id="s1t1" class="s1-t1">YOUR</div>
+      <div id="s1t2" class="s1-t2">RESUME</div>
+      <div id="s1t3" class="s1-t3">IS COSTING</div>
+      <div id="s1t4" class="s1-t4">JOBS</div>
+    </div>
+  </div>
+
+  <!-- ── SCENE 2: 6 SECONDS ── -->
+  <div id="s2" class="scene">
+    <div id="s2g" class="glow" style="width:1020px;height:1020px;top:60px;left:30px;
+      background:radial-gradient(circle,rgba(255,214,10,0.17) 0%,rgba(255,214,10,0) 66%);"></div>
+    <div class="scene-inner" style="gap:6px;">
+      <div id="s2t1" class="s2-top">RECRUITERS DECIDE</div>
+      <div id="s2t2" class="s2-in">IN JUST</div>
+      <div id="s2t3" class="s2-num">6</div>
+      <div id="s2t4" class="s2-sec">SECONDS</div>
+      <div id="s2t5" class="s2-sub">Here's what actually works</div>
+    </div>
+  </div>
+
+  <!-- ── SCENE 3: TIP 01 ── -->
+  <div id="s3" class="scene">
+    <div id="s3g" class="glow" style="width:840px;height:840px;top:160px;left:120px;
+      background:radial-gradient(circle,rgba(255,214,10,0.11) 0%,rgba(255,214,10,0) 68%);"></div>
+    <div class="scene-inner" style="gap:18px;">
+      <div id="s3badge" class="tip-badge">01</div>
+      <div id="s3h1" class="tip-h1">DITCH THE</div>
+      <div id="s3h2" class="tip-h2-red">BUZZWORDS</div>
+      <div id="s3div" class="divider"></div>
+      <div id="s3bad" class="ex-card ex-bad">
+        <div class="ex-tag ex-tag-bad">✗ Before</div>
+        <div class="ex-text ex-text-bad">Results-Driven Professional</div>
+      </div>
+      <div id="s3good" class="ex-card ex-good">
+        <div class="ex-tag ex-tag-good">✓ After</div>
+        <div class="ex-text">Senior Product Designer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCENE 4: TIP 02 ── -->
+  <div id="s4" class="scene">
+    <div id="s4g" class="glow" style="width:920px;height:920px;top:100px;left:80px;
+      background:radial-gradient(circle,rgba(255,214,10,0.13) 0%,rgba(255,214,10,0) 68%);"></div>
+    <div class="scene-inner" style="gap:18px;">
+      <div id="s4badge" class="tip-badge">02</div>
+      <div id="s4h1" class="tip-h1">QUANTIFY</div>
+      <div id="s4h2" class="tip-h1" style="margin-top:-10px;">EVERYTHING</div>
+      <div id="s4div" class="divider"></div>
+      <div id="s4bad" class="ex-card ex-bad">
+        <div class="ex-tag ex-tag-bad">✗ Before</div>
+        <div class="ex-text ex-text-bad">managed a team</div>
+      </div>
+      <div id="s4good" class="ex-card ex-good">
+        <div class="ex-tag ex-tag-good">✓ After</div>
+        <div class="ex-text">Managed <span class="stat-num" id="sn1">12</span> people &amp; cut costs by <span class="stat-num" id="sn2">40%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCENE 5: TIP 03 ── -->
+  <div id="s5" class="scene">
+    <div id="s5g" class="glow" style="width:860px;height:860px;top:130px;left:110px;
+      background:radial-gradient(circle,rgba(255,214,10,0.12) 0%,rgba(255,214,10,0) 68%);"></div>
+    <div class="scene-inner" style="gap:18px;">
+      <div id="s5badge" class="tip-badge">03</div>
+      <div id="s5h1" class="tip-h1">MATCH THE</div>
+      <div id="s5h2" class="tip-h2-yel">KEYWORDS</div>
+      <div id="s5sub" class="tip-sub">Copy exact words from the job posting</div>
+      <div class="kw-row">
+        <div class="kw-pill" id="kp1">Python</div>
+        <div class="kw-pill" id="kp2">Agile</div>
+        <div class="kw-pill" id="kp3">Leadership</div>
+        <div class="kw-pill" id="kp4">React</div>
+        <div class="kw-pill" id="kp5">Data Analysis</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCENE 6: CTA ── -->
+  <div id="s6" class="scene">
+    <div id="s6g" class="glow" style="width:1040px;height:1040px;top:60px;left:20px;
+      background:radial-gradient(circle,rgba(34,197,94,0.15) 0%,rgba(34,197,94,0) 68%);"></div>
+    <div class="scene-inner" style="justify-content:center;padding-top:0;gap:6px;">
+      <div id="s6t1" class="cta-main">FOLLOW</div>
+      <div id="s6t2" class="cta-sub">FOR MORE</div>
+      <div id="s6bar" class="cta-bar"></div>
+      <div id="s6t3" class="cta-save">▶ SAVE THIS</div>
+    </div>
+  </div>
+
+  <!-- ── CAPTIONS ── -->
+  <div id="cap-layer">
+    <div id="cg-0"  class="cg">Your resume</div>
+    <div id="cg-1"  class="cg">is costing</div>
+    <div id="cg-2"  class="cg">you <span class="cr">jobs</span></div>
+    <div id="cg-3"  class="cg">Recruiters decide</div>
+    <div id="cg-4"  class="cg">in just <span class="cy">six</span></div>
+    <div id="cg-5"  class="cg"><span class="cy">seconds</span></div>
+    <div id="cg-6"  class="cg">Here's what</div>
+    <div id="cg-7"  class="cg">actually works</div>
+    <div id="cg-8"  class="cg">Number <span class="cy">one</span></div>
+    <div id="cg-9"  class="cg">ditch the</div>
+    <div id="cg-10" class="cg"><span class="cr">buzzwords</span></div>
+    <div id="cg-11" class="cg">Write your</div>
+    <div id="cg-12" class="cg">actual job title</div>
+    <div id="cg-13" class="cg">Number <span class="cy">two</span></div>
+    <div id="cg-14" class="cg"><span class="cy">quantify</span> everything</div>
+    <div id="cg-15" class="cg">Not managed a team</div>
+    <div id="cg-16" class="cg">managed <span class="cy">twelve</span></div>
+    <div id="cg-17" class="cg">people and slashed</div>
+    <div id="cg-18" class="cg">costs by <span class="cy">forty</span></div>
+    <div id="cg-19" class="cg"><span class="cy">percent</span></div>
+    <div id="cg-20" class="cg">Number <span class="cy">three</span></div>
+    <div id="cg-21" class="cg">match the keywords</div>
+    <div id="cg-22" class="cg">exactly from</div>
+    <div id="cg-23" class="cg">the job posting</div>
+    <div id="cg-24" class="cg"><span class="cy">Follow</span> for more</div>
+    <div id="cg-25" class="cg">resume tips</div>
+    <div id="cg-26" class="cg">that actually</div>
+    <div id="cg-27" class="cg">land <span class="cg2">interviews</span></div>
+  </div>
+
+  <!-- ── AUDIO ── -->
+  <audio id="narr" data-start="0" data-duration="20.7" data-track-index="0"
+         src="narration.wav" data-volume="1"></audio>
+
+</div><!-- #root -->
+
+<script>
+window.__timelines = window.__timelines || {};
+var tl = gsap.timeline({ paused: true });
+
+// ── SCENE 1 ENTRANCE ──────────────────────────────────────
+tl.to('#s1g', { scale: 1.07, duration: 1.4, ease: 'sine.inOut' }, 0.2);
+tl.to('#s1g', { scale: 1.0,  duration: 1.4, ease: 'sine.inOut' }, 1.6);
+tl.to('#s1g', { scale: 1.07, duration: 1.0, ease: 'sine.inOut' }, 3.0);
+
+tl.from('#s1ghost', { opacity: 0, duration: 2.0, ease: 'sine.out' }, 0.1);
+tl.from('#s1t1', { y: 70, opacity: 0, duration: 0.38, ease: 'expo.out' },    0.15);
+tl.from('#s1t2', { y: 80, opacity: 0, duration: 0.42, ease: 'power4.out' },  0.28);
+tl.from('#s1t3', { x: -55, opacity: 0, duration: 0.36, ease: 'back.out(1.4)' }, 0.44);
+tl.from('#s1t4', { scale: 1.5, opacity: 0, duration: 0.52, ease: 'back.out(1.6)' }, 0.62);
+
+// ── TRANSITION S1 → S2  (crossfade @3.1s) ─────────────────
+tl.to('#s2', { opacity: 1, duration: 0.55, ease: 'power2.inOut' }, 3.1);
+tl.set('#s1', { opacity: 0 }, 3.65);
+
+// ── SCENE 2 ENTRANCE ──────────────────────────────────────
+tl.from('#s2g',  { scale: 0.8, opacity: 0, duration: 0.7, ease: 'power2.out' }, 3.2);
+tl.to('#s2g',    { scale: 1.09, duration: 1.8, ease: 'sine.inOut' }, 4.0);
+tl.to('#s2g',    { scale: 0.97, duration: 1.6, ease: 'sine.inOut' }, 5.9);
+
+tl.from('#s2t1', { y: -45, opacity: 0, duration: 0.34, ease: 'power3.out' },      3.25);
+tl.from('#s2t2', { y: -30, opacity: 0, duration: 0.30, ease: 'power2.out' },      3.46);
+tl.from('#s2t3', { scale: 0.45, opacity: 0, duration: 0.56, ease: 'back.out(1.8)' }, 3.60);
+tl.from('#s2t4', { y: 45,  opacity: 0, duration: 0.34, ease: 'expo.out' },        4.14);
+tl.from('#s2t5', { y: 28,  opacity: 0, duration: 0.38, ease: 'power2.out' },      4.46);
+
+// ── TRANSITION S2 → S3  (crossfade @6.7s) ─────────────────
+tl.to('#s3', { opacity: 1, duration: 0.55, ease: 'power2.inOut' }, 6.7);
+tl.set('#s2', { opacity: 0 }, 7.25);
+
+// ── SCENE 3 ENTRANCE ──────────────────────────────────────
+tl.from('#s3g',    { scale: 0.7, opacity: 0, duration: 0.65, ease: 'power2.out' }, 6.78);
+tl.to('#s3g',      { scale: 1.12, duration: 2.4, ease: 'sine.inOut' },             7.44);
+
+tl.from('#s3badge',{ scale: 0.6, opacity: 0, duration: 0.28, ease: 'back.out(2.1)' }, 6.85);
+tl.from('#s3h1',   { x: -65, opacity: 0, duration: 0.34, ease: 'power3.out' },       7.04);
+tl.from('#s3h2',   { x:  65, opacity: 0, duration: 0.34, ease: 'power3.out' },       7.22);
+tl.from('#s3div',  { scaleX: 0, opacity: 0, duration: 0.28, ease: 'power2.out' },    7.42);
+tl.from('#s3bad',  { y: 32, opacity: 0, duration: 0.34, ease: 'power2.out' },        7.58);
+tl.from('#s3good', { y: 32, opacity: 0, duration: 0.38, ease: 'back.out(1.3)' },     7.88);
+
+// ── TRANSITION S3 → S4  (crossfade @11.2s) ────────────────
+tl.to('#s4', { opacity: 1, duration: 0.55, ease: 'power2.inOut' }, 11.2);
+tl.set('#s3', { opacity: 0 }, 11.75);
+
+// ── SCENE 4 ENTRANCE ──────────────────────────────────────
+tl.from('#s4g',    { scale: 0.78, opacity: 0, duration: 0.60, ease: 'power2.out' }, 11.28);
+tl.to('#s4g',      { scale: 1.1, duration: 2.2, ease: 'sine.inOut' },              11.88);
+
+tl.from('#s4badge',{ scale: 0.6, opacity: 0, duration: 0.28, ease: 'back.out(2.1)' }, 11.36);
+tl.from('#s4h1',   { x: -55, opacity: 0, duration: 0.34, ease: 'power4.out' },        11.54);
+tl.from('#s4h2',   { x:  55, opacity: 0, duration: 0.34, ease: 'power4.out' },        11.72);
+tl.from('#s4div',  { scaleX: 0, opacity: 0, duration: 0.26, ease: 'power2.out' },     11.88);
+tl.from('#s4bad',  { y: 28, opacity: 0, duration: 0.34, ease: 'power2.out' },         12.04);
+tl.from('#s4good', { y: 28, opacity: 0, duration: 0.40, ease: 'back.out(1.4)' },      12.34);
+tl.from('#sn1',    { scale: 1.7, duration: 0.24, ease: 'back.out(1.9)' },             12.70);
+tl.from('#sn2',    { scale: 1.7, duration: 0.24, ease: 'back.out(1.9)' },             12.82);
+
+// ── TRANSITION S4 → S5  (crossfade @15.7s) ────────────────
+tl.to('#s5', { opacity: 1, duration: 0.55, ease: 'power2.inOut' }, 15.7);
+tl.set('#s4', { opacity: 0 }, 16.25);
+
+// ── SCENE 5 ENTRANCE ──────────────────────────────────────
+tl.from('#s5g',    { scale: 0.78, opacity: 0, duration: 0.65, ease: 'power2.out' }, 15.78);
+tl.to('#s5g',      { scale: 1.12, duration: 2.6, ease: 'sine.inOut' },             16.44);
+
+tl.from('#s5badge',{ scale: 0.6, opacity: 0, duration: 0.28, ease: 'back.out(2.1)' }, 15.86);
+tl.from('#s5h1',   { y: -42, opacity: 0, duration: 0.34, ease: 'expo.out' },          16.06);
+tl.from('#s5h2',   { y:  42, opacity: 0, duration: 0.38, ease: 'back.out(1.5)' },     16.24);
+tl.from('#s5sub',  { y: 22, opacity: 0, duration: 0.34, ease: 'power2.out' },         16.50);
+tl.from('#kp1',    { scale: 0, opacity: 0, duration: 0.24, ease: 'back.out(1.9)' },   16.72);
+tl.from('#kp2',    { scale: 0, opacity: 0, duration: 0.24, ease: 'back.out(1.9)' },   16.82);
+tl.from('#kp3',    { scale: 0, opacity: 0, duration: 0.24, ease: 'back.out(1.9)' },   16.92);
+tl.from('#kp4',    { scale: 0, opacity: 0, duration: 0.24, ease: 'back.out(1.9)' },   17.02);
+tl.from('#kp5',    { scale: 0, opacity: 0, duration: 0.24, ease: 'back.out(1.9)' },   17.12);
+
+// ── TRANSITION S5 → S6  (crossfade @20.5s) ────────────────
+tl.to('#s6', { opacity: 1, duration: 0.55, ease: 'power2.inOut' }, 20.5);
+tl.set('#s5', { opacity: 0 }, 21.05);
+
+// ── SCENE 6 ENTRANCE ──────────────────────────────────────
+tl.from('#s6g',  { scale: 0.6, opacity: 0, duration: 0.80, ease: 'power2.out' }, 20.58);
+tl.to('#s6g',    { scale: 1.12, duration: 2.8, ease: 'sine.inOut' },             21.38);
+
+tl.from('#s6t1', { scale: 0.55, opacity: 0, duration: 0.52, ease: 'back.out(1.8)' }, 20.72);
+tl.from('#s6t2', { y: 44, opacity: 0, duration: 0.40, ease: 'power3.out' },           21.18);
+tl.from('#s6bar',{ scaleX: 0, opacity: 0, duration: 0.30, ease: 'power2.out' },       21.54);
+tl.from('#s6t3', { scale: 0.78, opacity: 0, duration: 0.44, ease: 'elastic.out(1,0.5)' }, 21.80);
+
+// Final scene fade out (only last scene allowed)
+tl.to('#s6', { opacity: 0, duration: 0.65, ease: 'power2.in' }, 25.1);
+
+// ── CAPTIONS ──────────────────────────────────────────────
+var GROUPS = [
+  { id:'cg-0',  s:0.30,  e:0.72  },
+  { id:'cg-1',  s:0.72,  e:1.14  },
+  { id:'cg-2',  s:1.14,  e:1.70  },
+  { id:'cg-3',  s:1.90,  e:2.60  },
+  { id:'cg-4',  s:2.60,  e:3.10  },
+  { id:'cg-5',  s:3.10,  e:3.62  },
+  { id:'cg-6',  s:3.80,  e:4.20  },
+  { id:'cg-7',  s:4.20,  e:4.90  },
+  { id:'cg-8',  s:5.10,  e:5.60  },
+  { id:'cg-9',  s:5.60,  e:6.00  },
+  { id:'cg-10', s:6.00,  e:6.52  },
+  { id:'cg-11', s:6.70,  e:7.12  },
+  { id:'cg-12', s:7.12,  e:8.02  },
+  { id:'cg-13', s:8.30,  e:8.80  },
+  { id:'cg-14', s:8.80,  e:9.72  },
+  { id:'cg-15', s:9.90,  e:10.76 },
+  { id:'cg-16', s:10.90, e:11.58 },
+  { id:'cg-17', s:11.56, e:12.38 },
+  { id:'cg-18', s:12.36, e:13.10 },
+  { id:'cg-19', s:13.08, e:13.62 },
+  { id:'cg-20', s:14.00, e:14.56 },
+  { id:'cg-21', s:14.54, e:15.36 },
+  { id:'cg-22', s:15.34, e:15.94 },
+  { id:'cg-23', s:15.92, e:16.72 },
+  { id:'cg-24', s:17.00, e:17.64 },
+  { id:'cg-25', s:17.62, e:18.16 },
+  { id:'cg-26', s:18.14, e:18.62 },
+  { id:'cg-27', s:18.60, e:19.52 }
+];
+
+// Bounce pattern cycles across groups for variety
+var BOUNCES = [
+  { fromScale:1.30, fromY: 22, ease:'back.out(1.8)'         },
+  { fromScale:1.24, fromY:-20, ease:'back.out(1.5)'         },
+  { fromScale:1.32, fromY: 18, ease:'elastic.out(1.0,0.5)'  },
+  { fromScale:1.26, fromY:-22, ease:'back.out(2.0)'         },
+  { fromScale:1.28, fromY: 20, ease:'back.out(1.9)'         },
+  { fromScale:1.22, fromY:-18, ease:'elastic.out(0.9,0.55)' },
+  { fromScale:1.34, fromY: 16, ease:'back.out(1.7)'         },
+  { fromScale:1.20, fromY:-24, ease:'back.out(1.6)'         }
+];
+
+GROUPS.forEach(function(g, gi) {
+  var el = document.getElementById(g.id);
+  if (!el) return;
+  var b = BOUNCES[gi % BOUNCES.length];
+  var inDur  = 0.13;
+  var outDur = 0.11;
+
+  // Set visible + starting pose just before entrance
+  tl.set(el, { opacity:0, scale:b.fromScale, y:b.fromY, visibility:'visible' }, g.s - 0.01);
+  // Pop in
+  tl.to(el,  { opacity:1, scale:1, y:0, duration:inDur, ease:b.ease }, g.s);
+  // Exit slide-up fade
+  tl.to(el,  { opacity:0, scale:0.93, y:-14, duration:outDur, ease:'power2.in' }, g.e - outDur);
+  // Hard deterministic kill
+  tl.set(el, { opacity:0, visibility:'hidden' }, g.e);
+});
+
+// Caption self-lint
+GROUPS.forEach(function(g, gi) {
+  var el = document.getElementById(g.id);
+  if (!el) return;
+  tl.seek(g.e + 0.01);
+  var cs = window.getComputedStyle(el);
+  if (cs.opacity !== '0' && cs.visibility !== 'hidden') {
+    console.warn('[cap-lint] group ' + gi + ' still visible at t=' + (g.e + 0.01).toFixed(2));
+  }
+});
+tl.seek(0);
+
+window.__timelines['main'] = tl;
+</script>
+</body>
+</html>
